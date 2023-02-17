@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      table {
+        border: 1px solid;
+        border-collapse: collapse;
+      }
+
+      .c1 {
+        border: 1px solid;
+        background-color: black;
+        width: 50px;
+        height: 50px;
+      }
+
+      .c2 {
+        border: 1px solid;
+        background-color: white;
+        width: 50px;
+        height: 50px;
+      }
+
+      div {
+        font-size: xx-large;
+      }
+    </style>
+
+    <script>
+      var N = 8;
+      var los = new Array(8).fill(0);
+      var rr = new Array();
+      var cc = 0;
+      var counter = 0;
+
+      function createTable() {
+        var table = document.createElement("TABLE");
+        table.id = "chessboard";
+
+        var tbody = document.createElement("TBODY");
+
+        table.appendChild(tbody);
+        for (var i = 0; i < N; i++) {
+          var row = document.createElement("TR");
+          tbody.appendChild(row);
+
+          for (var j = 0; j < N; j++) {
+            var col = document.createElement("TD");
+            (i + j) % 2 != 0 ? (col.className = "c2") : (col.className = "c1");
+            row.appendChild(col);
+          }
+        }
+        document.getElementById("table_container").appendChild(table);
+      }
+
+      function checkPosition(rr, cc) {
+        rr = rr + 1;
+        for (var i = 0; i < N; i++) {
+          var tmp = los[i];
+          if (tmp != 0) {
+            if (tmp == rr || i == cc || Math.abs(tmp - rr) == Math.abs(i - cc))
+              return 0;
+          }
+        }
+        return 1;
+      }
+
+      function placeQueen(event) {
+        var can_place_queen = 0;
+        if (event.target) {
+          row = event.target.parentNode.rowIndex;
+          col = event.target.cellIndex;
+        } else {
+          row = event.srcElement.parentElement.rowIndex;
+          col = event.srcElement.cellIndex;
+        }
+
+        if (row == undefined) return;
+        if (los[col] == row + 1) {
+          document.getElementsByTagName("TR")[row].getElementsByTagName("TD")[
+            col
+          ].style.backgroundImage = "none";
+          los[col] = 0;
+          counter--;
+          document.getElementById("contador").innerHTML = "Reinas colocadas: " + counter;
+          return;
+        }
+
+        can_place_queen = checkPosition(row, col);
+
+        if (can_place_queen == 1) {
+          los[col] = row + 1;
+          counter++;
+          placeQueenImg(row, col);
+          if (counter == N) {
+            alert("Ganaste :^)");
+          }
+          document.getElementById("contador").innerHTML =
+            "Reinas colocadas: " + counter;
+        } else alert("No puedes colocar una reina ahí");
+      }
+
+      function solution1() {
+        restart();
+        placeQueenImg(0, 4);
+        placeQueenImg(1, 1);
+        placeQueenImg(2, 3);
+        placeQueenImg(3, 6);
+        placeQueenImg(4, 2);
+        placeQueenImg(5, 7);
+        placeQueenImg(6, 5);
+        placeQueenImg(7, 0);
+      }
+
+      function solution2() {
+        restart();
+        placeQueenImg(0, 4);
+        placeQueenImg(1, 2);
+        placeQueenImg(2, 7);
+        placeQueenImg(3, 3);
+        placeQueenImg(4, 6);
+        placeQueenImg(5, 0);
+        placeQueenImg(6, 5);
+        placeQueenImg(7, 1);
+      }
+
+      function placeQueenImg(row, col){
+        var table = document.getElementById("chessboard");
+        var cell = table.rows[row].cells[col];
+        cell.style.backgroundImage = "url(queen.webp)";
+        cell.style.backgroundSize = "cover";
+      }
+
+      function restart() {
+        var celdas = document
+          .getElementById("chessboard")
+          .getElementsByTagName("td");
+        for (let i = 0; i < celdas.length; i++) {
+          celdas[i].style = "backgroundImage:none";
+        }
+        counter = 0;
+        document.getElementById("contador").innerHTML = "Reinas colocadas: " + counter;
+        los = new Array(8).fill(0);
+      }
+    </script>
+    <title>8 reinas</title>
+  </head>
+  <body id="startseite" onload="createTable();">
+    <div id="table_container" onclick="placeQueen(event)"></div>
+    <div id="contador">Reinas colocadas: 0</div>
+    <button onclick="simulacion()">Simulación</button>
+    <button onclick="restart()">Reiniciar</button>
+    <button onclick="solution1()">Solución 1</button>
+    <button onclick="solution2()">Solución 2</button>
+  </body>
+</html>
