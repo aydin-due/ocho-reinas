@@ -31,12 +31,17 @@
     </style>
 
     <script>
+      /* Declaring the variables that will be used in the program. */
       var N = 8;
       var los = new Array(8).fill(0);
       var rr = new Array();
       var cc = 0;
       var counter = 0;
 
+      /**
+       * It creates a table with N rows and N columns, where N is the number of rows and columns in the
+       * chessboard
+       */
       function createTable() {
         var table = document.createElement("TABLE");
         table.id = "chessboard";
@@ -57,6 +62,15 @@
         document.getElementById("table_container").appendChild(table);
       }
 
+      /**
+       * If the row of the queen is the same as the row of another queen, or the column of the queen is the
+       * same as the column of another queen, or the absolute value of the difference between the row of
+       * the queen and the row of another queen is the same as the absolute value of the difference between
+       * the column of the queen and the column of another queen, then return 0, else return 1
+       * @param rr - row
+       * @param cc - column number
+       * @returns 0 if the queen can't be placed in the position, 1 if it can
+       */
       function checkPosition(rr, cc) {
         rr = rr + 1;
         for (var i = 0; i < N; i++) {
@@ -69,7 +83,11 @@
         return 1;
       }
 
+      /**
+       * It checks if the user can place a queen in the selected cell, and if so, it places it
+       */
       function placeQueen(event) {
+        /* Getting the row and column of the cell that was clicked. */
         var can_place_queen = 0;
         if (event.target) {
           row = event.target.parentNode.rowIndex;
@@ -79,20 +97,28 @@
           col = event.srcElement.cellIndex;
         }
 
+        /* Checking if the user clicked on a cell that is not part of the table. */
         if (row == undefined) return;
+        /* Checking if the user clicked on a cell that already has a queen, and if so, it removes it. */
         if (los[col] == row + 1) {
           document.getElementsByTagName("TR")[row].getElementsByTagName("TD")[
             col
           ].style.backgroundImage = "none";
+          /* Setting the value of the cell to 0, which means that there is no queen in that cell. */
           los[col] = 0;
+          /* Decreasing the counter and updating the counter in the HTML. */
           counter--;
-          document.getElementById("contador").innerHTML = "Reinas colocadas: " + counter;
+          document.getElementById("contador").innerHTML =
+            "Reinas colocadas: " + counter;
           return;
         }
 
+        /* Checking if the user can place a queen in the selected cell */
         can_place_queen = checkPosition(row, col);
 
+        /* Checking if the user can place a queen in the selected cell, and if so, it places it. */
         if (can_place_queen == 1) {
+          /* Saving the position of the queen in the array. */
           los[col] = row + 1;
           counter++;
           placeQueenImg(row, col);
@@ -128,13 +154,22 @@
         placeQueenImg(7, 1);
       }
 
-      function placeQueenImg(row, col){
+      /**
+       * It takes a row and column number as parameters, finds the corresponding cell in the table, and
+       * sets the background image to the queen image
+       * @param row - the row number of the cell
+       * @param col - the column of the cell
+       */
+      function placeQueenImg(row, col) {
         var table = document.getElementById("chessboard");
         var cell = table.rows[row].cells[col];
         cell.style.backgroundImage = "url(queen.webp)";
         cell.style.backgroundSize = "cover";
       }
 
+      /**
+       * It resets the board and the counter
+       */
       function restart() {
         var celdas = document
           .getElementById("chessboard")
